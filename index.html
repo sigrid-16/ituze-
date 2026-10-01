@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ituze — Mental Wellness</title>
+  <meta name="description" content="A calm space to check in with your mood, breathe, journal, and find support.">
+  <meta name="theme-color" content="#3b7f8f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Ituze">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icons/icon.svg" alt="" width="32" height="32">
+      <span>Ituze</span>
+    </div>
+    <button id="installBtn" class="btn btn-small" hidden>Install app</button>
+  </header>
+
+  <main id="app">
+    <!-- HOME -->
+    <section id="view-home" class="view active" aria-labelledby="home-title">
+      <h1 id="home-title"><span id="greeting">Hello</span> 👋</h1>
+      <p class="muted">Take a moment for yourself today.</p>
+
+      <div class="card quote-card">
+        <p id="affirmation" class="affirmation"></p>
+        <button id="newAffirmation" class="link-btn">Another one</button>
+      </div>
+
+      <div class="card">
+        <h2>How are you feeling?</h2>
+        <div class="mood-picker" data-target="home"></div>
+        <p id="homeMoodMsg" class="muted small" aria-live="polite"></p>
+      </div>
+
+      <div class="grid-2">
+        <button class="tile" data-go="breathe"><span class="tile-emoji">🌬️</span>Breathe</button>
+        <button class="tile" data-go="journal"><span class="tile-emoji">📓</span>Journal</button>
+        <button class="tile" data-go="mood"><span class="tile-emoji">📈</span>My moods</button>
+        <button class="tile" data-go="help"><span class="tile-emoji">💚</span>Get help</button>
+      </div>
+
+      <div class="card stats">
+        <div><strong id="statStreak">0</strong><span>day streak</span></div>
+        <div><strong id="statCheckins">0</strong><span>check-ins</span></div>
+        <div><strong id="statEntries">0</strong><span>journal entries</span></div>
+      </div>
+    </section>
+
+    <!-- MOOD -->
+    <section id="view-mood" class="view" aria-labelledby="mood-title">
+      <h1 id="mood-title">Mood tracker</h1>
+      <div class="card">
+        <h2>Log your mood</h2>
+        <div class="mood-picker" data-target="mood"></div>
+        <label class="field">
+          <span>What's on your mind? (optional)</span>
+          <textarea id="moodNote" rows="2" maxlength="280" placeholder="A few words…"></textarea>
+        </label>
+        <button id="saveMood" class="btn" disabled>Save check-in</button>
+      </div>
+
+      <div class="card">
+        <h2>Last 7 days</h2>
+        <div id="moodChart" class="chart" role="img" aria-label="Average mood for the last 7 days"></div>
+      </div>
+
+      <div class="card">
+        <h2>History</h2>
+        <ul id="moodList" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- BREATHE -->
+    <section id="view-breathe" class="view" aria-labelledby="breathe-title">
+      <h1 id="breathe-title">Breathe</h1>
+      <div class="segmented" role="tablist">
+        <button class="seg active" data-pattern="box">Box 4·4·4·4</button>
+        <button class="seg" data-pattern="relax">Relax 4·7·8</button>
+        <button class="seg" data-pattern="calm">Calm 4·6</button>
+      </div>
+      <div class="breath-wrap">
+        <div id="breathCircle" class="breath-circle">
+          <span id="breathLabel">Ready</span>
+          <span id="breathCount" class="breath-count"></span>
+        </div>
+      </div>
+      <p id="breathCycles" class="muted center">Find a comfortable position.</p>
+      <button id="breathToggle" class="btn btn-wide">Start</button>
+    </section>
+
+    <!-- JOURNAL -->
+    <section id="view-journal" class="view" aria-labelledby="journal-title">
+      <h1 id="journal-title">Journal</h1>
+      <div class="card">
+        <div class="prompt-row">
+          <p id="journalPrompt" class="prompt"></p>
+          <button id="newPrompt" class="link-btn" aria-label="New prompt">↻</button>
+        </div>
+        <label class="field">
+          <span class="sr-only">Journal entry</span>
+          <textarea id="journalText" rows="6" placeholder="Write freely. This stays on your device."></textarea>
+        </label>
+        <button id="saveJournal" class="btn">Save entry</button>
+      </div>
+      <ul id="journalList" class="list"></ul>
+    </section>
+
+    <!-- HELP -->
+    <section id="view-help" class="view" aria-labelledby="help-title">
+      <h1 id="help-title">Get help</h1>
+      <div class="card alert">
+        <h2>In immediate danger?</h2>
+        <p>If you or someone else is at risk of harm, call your local emergency number right now.</p>
+        <div class="btn-row">
+          <a class="btn btn-danger" href="tel:112">Call 112</a>
+          <a class="btn btn-outline" href="tel:114">Rwanda health line 114</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Talk to someone</h2>
+        <ul class="plain">
+          <li>Reach out to a friend, family member, or someone you trust.</li>
+          <li>Visit your nearest health centre or hospital — many offer mental health services.</li>
+          <li>Find a free, confidential helpline in your country at
+            <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Grounding: 5-4-3-2-1</h2>
+        <ol class="plain">
+          <li><strong>5</strong> things you can see</li>
+          <li><strong>4</strong> things you can touch</li>
+          <li><strong>3</strong> things you can hear</li>
+          <li><strong>2</strong> things you can smell</li>
+          <li><strong>1</strong> thing you can taste</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Your data</h2>
+        <p class="muted">Everything you write in Ituze is stored only on this device. Nothing is sent anywhere.</p>
+        <div class="btn-row">
+          <button id="exportData" class="btn btn-outline">Export</button>
+          <button id="clearData" class="btn btn-outline danger-text">Erase all</button>
+        </div>
+      </div>
+      <p class="muted small center">Ituze is a self-care tool and is not a substitute for professional care.</p>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab active" data-go="home"><span aria-hidden="true">🏠</span>Home</button>
+    <button class="tab" data-go="mood"><span aria-hidden="true">📈</span>Mood</button>
+    <button class="tab" data-go="breathe"><span aria-hidden="true">🌬️</span>Breathe</button>
+    <button class="tab" data-go="journal"><span aria-hidden="true">📓</span>Journal</button>
+    <button class="tab" data-go="help"><span aria-hidden="true">💚</span>Help</button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
