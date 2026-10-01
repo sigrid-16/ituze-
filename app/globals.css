@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+/* Dark mode is driven by a `.dark` class on <html> (set by ThemeProvider). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+ * Ituze design tokens — exact brand palette (light / dark)
+ * ------------------------------------------------------------------------- */
+:root {
+  --background: #f7f1e8; /* warm sand */
+  --surface: #fffdf9;
+  --primary: #2f5d50; /* deep green */
+  --primary-soft: #dce9e2;
+  --primary-foreground: #fffdf9;
+  --accent: #c8664a; /* terracotta */
+  --accent-soft: #f6dfd5;
+  --accent-foreground: #fffdf9;
+  --text: #24302b;
+  --muted: #6b746e;
+  --border: #e8dfd2;
+  --crisis: #b83a3a;
+  --crisis-foreground: #ffffff;
+  /* Text-on-soft variants that keep WCAG AA on the soft fills */
+  --accent-strong: #9e4a33;
+  --ring: #2f5d50;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #16201c;
+  --surface: #1f2b26;
+  --primary: #7fb8a4;
+  --primary-soft: #2a3f37;
+  --primary-foreground: #16201c;
+  --accent: #e08a6d;
+  --accent-soft: #3d2a24;
+  --accent-foreground: #16201c;
+  --text: #ece7df;
+  --muted: #a3ada7;
+  --border: #2e3b35;
+  --crisis: #f07a7a;
+  --crisis-foreground: #16201c;
+  --accent-strong: #e08a6d;
+  --ring: #7fb8a4;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-strong: var(--accent-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-crisis: var(--crisis);
+  --color-crisis-foreground: var(--crisis-foreground);
+  --color-ring: var(--ring);
+
+  --font-sans: "Nunito Variable", ui-rounded, "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--text);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Bottom-tab safe area on phones */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes ituze-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-rise {
+  animation: ituze-rise 0.35s ease-out both;
+}
+
+@keyframes ituze-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.animate-rec {
+  animation: ituze-pulse-dot 1.2s ease-in-out infinite;
+}
