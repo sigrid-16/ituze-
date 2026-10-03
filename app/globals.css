@@ -7,41 +7,41 @@
  * Ituze design tokens — exact brand palette (light / dark)
  * ------------------------------------------------------------------------- */
 :root {
-  --background: #f7f1e8; /* warm sand */
-  --surface: #fffdf9;
-  --primary: #2f5d50; /* deep green */
-  --primary-soft: #dce9e2;
-  --primary-foreground: #fffdf9;
-  --accent: #c8664a; /* terracotta */
-  --accent-soft: #f6dfd5;
-  --accent-foreground: #fffdf9;
-  --text: #24302b;
-  --muted: #6b746e;
-  --border: #e8dfd2;
+  --background: #ffffff;
+  --surface: #ffffff;
+  --primary: #111111; /* near-black */
+  --primary-soft: #ededed;
+  --primary-foreground: #ffffff;
+  --accent: #404040; /* dark gray */
+  --accent-soft: #e5e5e5;
+  --accent-foreground: #ffffff;
+  --text: #111111;
+  --muted: #6b6b6b;
+  --border: #e0e0e0;
   --crisis: #b83a3a;
   --crisis-foreground: #ffffff;
   /* Text-on-soft variants that keep WCAG AA on the soft fills */
-  --accent-strong: #9e4a33;
-  --ring: #2f5d50;
+  --accent-strong: #262626;
+  --ring: #111111;
   color-scheme: light;
 }
 
 .dark {
-  --background: #16201c;
-  --surface: #1f2b26;
-  --primary: #7fb8a4;
-  --primary-soft: #2a3f37;
-  --primary-foreground: #16201c;
-  --accent: #e08a6d;
-  --accent-soft: #3d2a24;
-  --accent-foreground: #16201c;
-  --text: #ece7df;
-  --muted: #a3ada7;
-  --border: #2e3b35;
+  --background: #0a0a0a;
+  --surface: #141414;
+  --primary: #f5f5f5; /* near-white */
+  --primary-soft: #262626;
+  --primary-foreground: #0a0a0a;
+  --accent: #cccccc;
+  --accent-soft: #2b2b2b;
+  --accent-foreground: #0a0a0a;
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --border: #2a2a2a;
   --crisis: #f07a7a;
-  --crisis-foreground: #16201c;
-  --accent-strong: #e08a6d;
-  --ring: #7fb8a4;
+  --crisis-foreground: #0a0a0a;
+  --accent-strong: #e5e5e5;
+  --ring: #f5f5f5;
   color-scheme: dark;
 }
 
