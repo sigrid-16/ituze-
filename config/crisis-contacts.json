@@ -1,0 +1,35 @@
+{
+  "_note": "Admin-editable crisis contacts shown behind every 'Need help now?' button. VERIFY every number with local authorities before any real-world use. Later this moves to an admin-managed table. Add the organization's own support line here once it exists.",
+  "country": "Rwanda",
+  "lastReviewed": "2026-10-01",
+  "contacts": [
+    {
+      "id": "emergency",
+      "name": "Police emergency",
+      "number": "112",
+      "description": "Immediate danger to you or someone else.",
+      "available": "24/7"
+    },
+    {
+      "id": "ambulance",
+      "name": "Ambulance (SAMU)",
+      "number": "912",
+      "description": "Medical emergency, injury or overdose.",
+      "available": "24/7"
+    },
+    {
+      "id": "gbv",
+      "name": "Isange One Stop Centre",
+      "number": "3029",
+      "description": "Support for gender-based violence and child abuse.",
+      "available": "24/7"
+    },
+    {
+      "id": "health-line",
+      "name": "Health information line (RBC)",
+      "number": "114",
+      "description": "Free health information and referral, including mental health.",
+      "available": "24/7"
+    }
+  ]
+}
