@@ -2,28 +2,31 @@
  * Demo seed data (Rwandan context). Everything here is fictional sample data.
  *
  * Dates are generated relative to "now", so the demo always looks current:
- * cohorts are mid-journey, appointments are upcoming, check-ins are recent.
+ * appointments are upcoming, check-ins are recent, events are ahead.
  */
 import type {
   Appointment,
   AvailabilitySlot,
-  Cohort,
-  CohortMember,
-  CohortMessage,
   CommunityEvent,
+  CommunityGroup,
+  DailyCheckin,
   DemoDatabase,
   Goal,
   GoalCheckin,
+  GroupMember,
+  GroupMessage,
   JournalEntry,
   Psychologist,
+  Resource,
+  SessionNote,
+  Testimonial,
   User,
-  WaitlistEntry,
 } from "@/lib/data/types";
 import { SAMPLE_DRAWING_DATA_URL } from "./sample-media";
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
-/** Demo personas — the role switcher signs in as one of these. */
+/** Demo personas: each Log In card signs in as one of these. */
 export const DEMO_USER_IDS = {
   anonymous: "u-inyenyeri",
   identified: "u-aline",
@@ -64,7 +67,8 @@ export function createSeed(now = new Date()): DemoDatabase {
       realName: null,
       isAnonymous: true,
       language: "rw",
-      avatarColor: "#7FB8A4",
+      avatarColor: "#8FAE9A",
+      intents: ["understand", "professional"],
       joinedAt: at(now, -24),
     },
     {
@@ -74,7 +78,8 @@ export function createSeed(now = new Date()): DemoDatabase {
       realName: "Aline Uwase",
       isAnonymous: false,
       language: "en",
-      avatarColor: "#C8664A",
+      avatarColor: "#B5865F",
+      intents: ["connect", "understand"],
       joinedAt: at(now, -71),
     },
     {
@@ -84,7 +89,8 @@ export function createSeed(now = new Date()): DemoDatabase {
       realName: "Dr. Jean-Paul Habimana",
       isAnonymous: false,
       language: "en",
-      avatarColor: "#2F5D50",
+      avatarColor: "#2F4A3C",
+      intents: [],
       joinedAt: at(now, -400),
     },
     {
@@ -94,7 +100,8 @@ export function createSeed(now = new Date()): DemoDatabase {
       realName: "Claudine Mukamana",
       isAnonymous: false,
       language: "en",
-      avatarColor: "#6B746E",
+      avatarColor: "#69716B",
+      intents: [],
       joinedAt: at(now, -500),
     },
   ];
@@ -104,7 +111,7 @@ export function createSeed(now = new Date()): DemoDatabase {
       id: "p-jeanpaul",
       userId: DEMO_USER_IDS.psychologist,
       name: "Dr. Jean-Paul Habimana",
-      title: "Clinical psychologist · Cohort facilitator",
+      title: "Clinical psychologist · Group facilitator",
       photoColor: "#2F5D50",
       initials: "JH",
       verificationStatus: "verified",
@@ -155,7 +162,7 @@ export function createSeed(now = new Date()): DemoDatabase {
       id: "p-josiane",
       userId: "u-josiane",
       name: "Josiane Ingabire",
-      title: "Counselling psychologist · Cohort facilitator",
+      title: "Counselling psychologist · Group facilitator",
       photoColor: "#9E4A33",
       initials: "JI",
       verificationStatus: "verified",
@@ -219,9 +226,12 @@ export function createSeed(now = new Date()): DemoDatabase {
     );
 
   const appointments: Appointment[] = [
+    // Aline (identified)
     {
       id: "a-1",
       memberId: DEMO_USER_IDS.identified,
+      memberName: "Aline Uwase",
+      memberAnonymous: false,
       psychologistId: "p-emmanuel",
       mode: "video",
       time: at(now, 2, 15, 0),
@@ -230,131 +240,176 @@ export function createSeed(now = new Date()): DemoDatabase {
     },
     {
       id: "a-2",
-      memberId: DEMO_USER_IDS.anonymous,
-      psychologistId: "p-solange",
-      mode: "text",
-      time: at(now, 1, 18, 0),
-      durationMin: 50,
-      status: "upcoming",
-    },
-    {
-      id: "a-3",
       memberId: DEMO_USER_IDS.identified,
+      memberName: "Aline Uwase",
+      memberAnonymous: false,
       psychologistId: "p-emmanuel",
       mode: "video",
       time: at(now, -12, 15, 0),
       durationMin: 50,
       status: "completed",
     },
-  ];
-
-  // Cohorts at different points of the 12 weeks
-  const cohorts: Cohort[] = [
+    // Inyenyeri (anonymous): booked with a nickname only
     {
-      id: "c-kimihurura",
-      name: "Kimihurura · Evening cohort",
-      facilitatorId: "p-jeanpaul",
-      location: "Ituze Wellness Space, Kimihurura",
-      timeSlot: "17:30–19:30",
-      // week 6 session is in 2 days
-      startDate: at(now, -33, 17, 30),
-      status: "active",
-      capacity: 9,
-      currentWeek: 6,
+      id: "a-3",
+      memberId: DEMO_USER_IDS.anonymous,
+      memberName: "Inyenyeri",
+      memberAnonymous: true,
+      psychologistId: "p-jeanpaul",
+      mode: "text",
+      time: at(now, 1, 18, 0),
+      durationMin: 50,
+      status: "upcoming",
+    },
+    // Jean-Paul's caseload (therapist demo)
+    {
+      id: "a-4",
+      memberId: "u-client-1",
+      memberName: "Quiet River",
+      memberAnonymous: true,
+      psychologistId: "p-jeanpaul",
+      mode: "audio",
+      time: at(now, 0, 17, 0),
+      durationMin: 50,
+      status: "upcoming",
     },
     {
-      id: "c-remera",
-      name: "Remera · Morning cohort",
+      id: "a-5",
+      memberId: "u-client-2",
+      memberName: "Grace Mukamana",
+      memberAnonymous: false,
+      psychologistId: "p-jeanpaul",
+      mode: "audio",
+      time: at(now, 3, 10, 0),
+      durationMin: 50,
+      status: "upcoming",
+    },
+    {
+      id: "a-6",
+      memberId: "u-client-3",
+      memberName: "Umuseke",
+      memberAnonymous: true,
+      psychologistId: "p-jeanpaul",
+      mode: "text",
+      time: at(now, 4, 19, 0),
+      durationMin: 50,
+      status: "requested",
+      message: "I'm not sure where to start. Work has been very heavy and I can't sleep.",
+    },
+    {
+      id: "a-7",
+      memberId: "u-client-4",
+      memberName: "Olivier Habimana",
+      memberAnonymous: false,
+      psychologistId: "p-jeanpaul",
+      mode: "video",
+      time: at(now, 5, 11, 0),
+      durationMin: 50,
+      status: "requested",
+      message: "My father passed away in the spring. I'd like to talk to someone about it.",
+    },
+    {
+      id: "a-8",
+      memberId: "u-client-2",
+      memberName: "Grace Mukamana",
+      memberAnonymous: false,
+      psychologistId: "p-jeanpaul",
+      mode: "audio",
+      time: at(now, -4, 10, 0),
+      durationMin: 50,
+      status: "completed",
+    },
+    {
+      id: "a-9",
+      memberId: "u-client-1",
+      memberName: "Quiet River",
+      memberAnonymous: true,
+      psychologistId: "p-jeanpaul",
+      mode: "text",
+      time: at(now, -7, 20, 0),
+      durationMin: 50,
+      status: "completed",
+    },
+  ];
+
+  const sessionNotes: SessionNote[] = [
+    {
+      id: "n-1",
+      appointmentId: "a-8",
+      psychologistId: "p-jeanpaul",
+      body: "Talked about tiredness and irritability at home. Agreed to try asking her sister for help with school pick-ups twice a week. Follow up on sleep.",
+      updatedAt: at(now, -4, 11, 0),
+    },
+    {
+      id: "n-2",
+      appointmentId: "a-9",
+      psychologistId: "p-jeanpaul",
+      body: "First session by text. Prefers to stay anonymous for now; respect that. Journaling at night helps. Gentle pace.",
+      updatedAt: at(now, -7, 21, 0),
+    },
+  ];
+
+  // Small, safe groups (no fixed program)
+  const groups: CommunityGroup[] = [
+    {
+      id: "grp-kimihurura",
+      name: "Evening circle · Kimihurura",
+      description: "A calm weekday evening to talk, listen and share tea with people who understand.",
+      facilitatorId: "p-jeanpaul",
+      location: "Ituze Wellness Space, Kimihurura",
+      rhythm: "Thursdays · 17:30",
+      capacity: 10,
+      createdAt: at(now, -60),
+    },
+    {
+      id: "grp-remera",
+      name: "Young adults · Remera",
+      description: "For students and young professionals finding their way. Saturday mornings, relaxed and honest.",
       facilitatorId: "p-solange",
       location: "Ituze Wellness Space, Remera",
-      timeSlot: "09:00–11:00",
-      // week 10 session is in 3 days
-      startDate: at(now, -60, 9, 0),
-      status: "active",
+      rhythm: "Saturdays · 09:30",
       capacity: 10,
-      currentWeek: 10,
+      createdAt: at(now, -90),
     },
     {
-      id: "c-nyamirambo",
-      name: "Nyamirambo · Evening cohort",
+      id: "grp-nyamirambo",
+      name: "Parents & caregivers · Nyamirambo",
+      description: "For mothers, fathers and caregivers carrying a lot. Children's corner available.",
       facilitatorId: "p-josiane",
       location: "Community hall, Nyamirambo",
-      timeSlot: "17:30–19:30",
-      startDate: at(now, 12, 17, 30),
-      status: "forming",
+      rhythm: "Tuesdays · 18:00",
       capacity: 8,
-      currentWeek: 0,
-    },
-    {
-      id: "c-kacyiru-2025",
-      name: "Kacyiru · Spring cohort",
-      facilitatorId: "p-jeanpaul",
-      location: "Ituze Wellness Space, Kimihurura",
-      timeSlot: "17:30–19:30",
-      startDate: at(now, -160, 17, 30),
-      status: "graduated",
-      capacity: 8,
-      currentWeek: 12,
+      createdAt: at(now, -20),
     },
   ];
 
-  const kimihururaNames = ["Aline", "Eric", "Divine", "Kevin", "Umutoni", "Patrick N.", "Grace", "Olivier"];
-  const cohortMembers: CohortMember[] = [
-    ...kimihururaNames.map((n, i) => ({
-      cohortId: "c-kimihurura",
-      userId: i === 0 ? DEMO_USER_IDS.identified : `u-kim-${i}`,
+  const memberRows = (groupId: string, names: string[], prefix: string, first?: string): GroupMember[] =>
+    names.map((n, i) => ({
+      groupId,
+      userId: i === 0 && first ? first : `u-${prefix}-${i}`,
       displayName: n,
-      joinedAt: at(now, -40),
-    })),
-    ...["Fabrice", "Ange", "Yvette", "Moïse", "Clarisse", "Jean de Dieu", "Ornella", "Samuel", "Nadine"].map((n, i) => ({
-      cohortId: "c-remera",
-      userId: `u-rem-${i}`,
-      displayName: n,
-      joinedAt: at(now, -68),
-    })),
-    ...["Sandrine", "Thierry", "Bella", "Innocent"].map((n, i) => ({
-      cohortId: "c-nyamirambo",
-      userId: `u-nya-${i}`,
-      displayName: n,
-      joinedAt: at(now, -3),
-    })),
+      joinedAt: at(now, -30 + i),
+    }));
+  const groupMembers: GroupMember[] = [
+    ...memberRows("grp-kimihurura", ["Aline", "Eric", "Divine", "Kevin", "Umutoni", "Patrick N.", "Grace", "Olivier"], "kim", DEMO_USER_IDS.identified),
+    ...memberRows("grp-remera", ["Fabrice", "Ange", "Yvette", "Moïse", "Clarisse", "Jean de Dieu", "Ornella"], "rem"),
+    ...memberRows("grp-nyamirambo", ["Sandrine", "Thierry", "Bella", "Innocent"], "nya"),
   ];
 
-  const waitlistEntries: WaitlistEntry[] = [
-    {
-      id: "w-1",
-      userId: DEMO_USER_IDS.anonymous,
-      preferredLocation: "Kimihurura",
-      preferredSlot: "Weekday evenings",
-      createdAt: at(now, -9),
-    },
-    ...["Keza", "Ndoli", "Mahoro", "Gisa", "Isimbi", "Teta"].map((n, i) => ({
-      id: `w-${i + 2}`,
-      userId: `u-wait-${i}`,
-      preferredLocation: i % 2 ? "Remera" : "Nyamirambo",
-      preferredSlot: i % 3 ? "Saturday mornings" : "Weekday evenings",
-      createdAt: at(now, -i - 2),
-    })),
-  ];
-
-  const cohortMessages: CohortMessage[] = [
+  const groupMessages: GroupMessage[] = [
     {
       id: "m-1",
-      cohortId: "c-kimihurura",
-      authorId: DEMO_USER_IDS.psychologist,
+      groupId: "grp-kimihurura",
       authorName: "Jean-Paul (facilitator)",
-      isFacilitator: true,
-      body: "Muraho neza everyone! Week 6 is about self-worth & confidence. If you like, bring a small object that reminds you of something you are proud of. See you at our next session, 17:30. Tea will be ready from 17:15.",
+      body: "Muraho neza everyone! This Thursday we'll talk about the small things that help us on hard days. If you like, bring an object that comforts you. Tea will be ready from 17:15.",
       pinned: true,
       isAnnouncement: true,
       createdAt: at(now, -1, 10, 5),
     },
     {
       id: "m-2",
-      cohortId: "c-kimihurura",
-      authorId: "u-kim-2",
+      groupId: "grp-kimihurura",
       authorName: "Divine",
-      isFacilitator: false,
       body: "Thank you Jean-Paul. Last week's breathing exercise helped me before an exam 🙏",
       pinned: false,
       isAnnouncement: false,
@@ -362,22 +417,18 @@ export function createSeed(now = new Date()): DemoDatabase {
     },
     {
       id: "m-3",
-      cohortId: "c-kimihurura",
-      authorId: "u-kim-6",
-      authorName: "Grace",
-      isFacilitator: false,
-      body: "I might be 10 minutes late next session because of work, please start without me.",
+      groupId: "grp-kimihurura",
+      authorName: "Ituze team",
+      body: "Our Saturday gathering is open to everyone this month. Bring a friend if you'd like.",
       pinned: false,
-      isAnnouncement: false,
-      createdAt: at(now, 0, 8, 15),
+      isAnnouncement: true,
+      createdAt: at(now, -3, 9, 0),
     },
     {
       id: "m-4",
-      cohortId: "c-remera",
-      authorId: "u-solange",
+      groupId: "grp-remera",
       authorName: "Solange (facilitator)",
-      isFacilitator: true,
-      body: "Week 10: values, meaning & purpose. We'll meet in the garden room if the weather is good ☀️",
+      body: "We'll meet in the garden room if the weather is good ☀️",
       pinned: true,
       isAnnouncement: true,
       createdAt: at(now, -2, 9, 0),
@@ -385,7 +436,7 @@ export function createSeed(now = new Date()): DemoDatabase {
   ];
 
   const journalEntries: JournalEntry[] = [
-    // Aline (identified, in cohort week 6)
+    // Aline (identified, in the Kimihurura evening circle)
     {
       id: "j-1",
       userId: DEMO_USER_IDS.identified,
@@ -399,7 +450,7 @@ export function createSeed(now = new Date()): DemoDatabase {
       id: "j-2",
       userId: DEMO_USER_IDS.identified,
       type: "image",
-      content: "Drew this after the creativity exercise. The colours reminded me of my mother's kitchen.",
+      content: "Drew this after the creative evening. The colours reminded me of my mother's kitchen.",
       mediaUrl: SAMPLE_DRAWING_DATA_URL,
       mood: "calm",
       createdAt: at(now, -5, 19, 30),
@@ -422,7 +473,7 @@ export function createSeed(now = new Date()): DemoDatabase {
       mood: "proud",
       createdAt: at(now, 0, 7, 20),
     },
-    // Inyenyeri (anonymous, on the waiting list)
+    // Inyenyeri (anonymous)
     {
       id: "j-5",
       userId: DEMO_USER_IDS.anonymous,
@@ -430,6 +481,8 @@ export function createSeed(now = new Date()): DemoDatabase {
       content:
         "First time writing here. I'm not sure what to say. I just know my mind has been very loud lately and it helps to put it somewhere.",
       mood: "heavy",
+      // Shared on purpose with the therapist before their first session
+      sharedWith: ["p-jeanpaul"],
       createdAt: at(now, -6, 22, 15),
     },
     {
@@ -445,10 +498,35 @@ export function createSeed(now = new Date()): DemoDatabase {
       id: "j-7",
       userId: DEMO_USER_IDS.anonymous,
       type: "text",
-      content: "Signed up for the cohort waiting list. Nervous but curious.",
+      content: "Booked a session for tomorrow, still with my nickname. Nervous but curious.",
       mood: "anxious",
       createdAt: at(now, -1, 18, 5),
     },
+  ];
+
+  const dailyCheckins: DailyCheckin[] = [
+    ...[
+      [-1, "good"],
+      [-2, "getting-by"],
+      [-3, "good"],
+      [-5, "heavy"],
+      [-6, "getting-by"],
+    ].map(([d, mood]) => ({
+      id: `dc-al-${d}`,
+      userId: DEMO_USER_IDS.identified,
+      date: ymd(now, d as number),
+      mood: mood as DailyCheckin["mood"],
+    })),
+    ...[
+      [-1, "unsure"],
+      [-3, "getting-by"],
+      [-6, "heavy"],
+    ].map(([d, mood]) => ({
+      id: `dc-in-${d}`,
+      userId: DEMO_USER_IDS.anonymous,
+      date: ymd(now, d as number),
+      mood: mood as DailyCheckin["mood"],
+    })),
   ];
 
   const goals: Goal[] = [
@@ -525,27 +603,142 @@ export function createSeed(now = new Date()): DemoDatabase {
   const events: CommunityEvent[] = [
     {
       id: "e-1",
-      title: "Alumni gathering & shared lunch",
+      title: "Community gathering & shared lunch",
       kind: "gathering",
-      date: nextWeekday(now, 6, 12, 0, 5),
+      date: nextWeekday(now, 6, 12, 0, 3),
       location: "Ituze Wellness Space, Kimihurura",
-      description: "Reconnect with alumni from every cohort. Bring a dish to share if you can.",
+      description: "An open, relaxed afternoon for everyone in the Ituze community. Bring a dish to share if you can.",
     },
     {
       id: "e-2",
       title: "Imigongo painting afternoon",
       kind: "creative",
-      date: nextWeekday(now, 0, 14, 0, 9),
+      date: nextWeekday(now, 0, 14, 0, 8),
       location: "Partner art studio, Kacyiru",
       description: "Learn the geometric patterns of imigongo with a local artist. All materials provided.",
     },
     {
       id: "e-3",
-      title: "Welcome circle for the Nyamirambo cohort",
-      kind: "volunteer",
-      date: at(now, 12, 17, 0),
-      location: "Community hall, Nyamirambo",
-      description: "Volunteer to greet new members on their first evening and share what the journey meant to you.",
+      title: "Sleep & stress: a gentle workshop",
+      kind: "workshop",
+      date: at(now, 10, 18, 0),
+      location: "Online · video",
+      description: "Dr. Emmanuel Nkurunziza shares simple, practical ways to rest better when life is busy.",
+    },
+    {
+      id: "e-4",
+      title: "Evening circle: comfort objects",
+      kind: "gathering",
+      groupId: "grp-kimihurura",
+      date: nextWeekday(now, 4, 17, 30),
+      location: "Ituze Wellness Space, Kimihurura",
+      description: "Our weekly circle. Bring something that comforts you, if you like.",
+    },
+  ];
+
+  const resources: Resource[] = [
+    {
+      id: "r-1",
+      kind: "exercise",
+      title: "Box breathing for loud moments",
+      summary: "A two-minute breathing pattern to slow things down.",
+      body: "Breathe in for four counts. Hold for four. Breathe out for four. Hold for four. Repeat four times. Notice your feet on the ground.",
+      minutes: 2,
+      topic: "Stress",
+      published: true,
+      createdAt: at(now, -3),
+    },
+    {
+      id: "r-2",
+      kind: "article",
+      title: "Why rest is not laziness",
+      summary: "Tiredness is information, not failure. A short read on giving yourself permission to pause.",
+      body: "Many of us grew up believing that rest has to be earned. But the body keeps asking for what it needs. Rest is how we come back to ourselves, and to the people we love.",
+      minutes: 4,
+      topic: "Rest",
+      published: true,
+      createdAt: at(now, -8),
+    },
+    {
+      id: "r-3",
+      kind: "exercise",
+      title: "Three good things",
+      summary: "Each evening, write down three things that went well, however small.",
+      body: "Before sleep, write three things that went well today and why. Small is perfect: a kind word, a cup of tea, finishing something.",
+      minutes: 5,
+      topic: "Gratitude",
+      published: true,
+      createdAt: at(now, -12),
+    },
+    {
+      id: "r-4",
+      kind: "article",
+      title: "Feeling alone in a new city",
+      summary: "Loneliness is common, and it is not a sign that something is wrong with you.",
+      body: "Moving for work or study can mean starting over. Small, regular contact helps more than big gestures: the same café, the same walk, a group that meets weekly.",
+      minutes: 5,
+      topic: "Connection",
+      published: true,
+      createdAt: at(now, -16),
+    },
+    {
+      id: "r-5",
+      kind: "article",
+      title: "What to expect from a first session",
+      summary: "What a psychologist will ask, what you can share, and what stays private.",
+      body: "A first session is mostly about getting to know each other. You decide how much to share. You can stay anonymous, and you can stop at any time.",
+      minutes: 3,
+      topic: "Support",
+      published: true,
+      createdAt: at(now, -20),
+    },
+    {
+      id: "r-6",
+      kind: "exercise",
+      title: "Grounding: 5-4-3-2-1",
+      summary: "Notice five things you see, four you hear, three you can touch…",
+      body: "Name five things you can see, four you can hear, three you can touch, two you can smell and one you can taste. Go slowly.",
+      minutes: 3,
+      topic: "Anxiety",
+      published: false,
+      createdAt: at(now, -1),
+    },
+  ];
+
+  // Sample stories for the demo, to be replaced with real, consented stories.
+  const testimonials: Testimonial[] = [
+    {
+      id: "t-1",
+      name: "Aline",
+      detail: "24, Kigali",
+      quote:
+        "I moved to Kigali for work and didn't know anyone. Some weeks the only conversations I had were with my manager. Joining a group on Ituze was scary at first, but by the third meeting I was laughing with people who understood exactly what I meant. We still meet for tea on Saturdays. I didn't realise how much I needed people until I found them.",
+      approved: true,
+      pinned: true,
+      sample: true,
+      createdAt: at(now, -30),
+    },
+    {
+      id: "t-2",
+      name: "“Quiet River” (now Eric)",
+      detail: "31",
+      quote:
+        "I signed up with a nickname because I wasn't ready for anyone to know I was struggling, not even a stranger. For two months I just wrote in my journal at night. Then one evening I booked a session, still as Quiet River. Nobody pushed me. When I finally changed my name to Eric, it felt like I was introducing myself to my own healing. I don't hide anymore, and I don't need to.",
+      approved: true,
+      pinned: false,
+      sample: true,
+      createdAt: at(now, -20),
+    },
+    {
+      id: "t-3",
+      name: "Grace",
+      detail: "45, Huye",
+      quote:
+        "I thought therapy was for people with big problems. I was just tired all the time and snapping at my children. Talking with a psychologist on Ituze, by voice call from my own kitchen, helped me see I'd been carrying too much for too long. It's a small change, but I ask for help now. My family feels the difference.",
+      approved: true,
+      pinned: false,
+      sample: true,
+      createdAt: at(now, -10),
     },
   ];
 
@@ -554,15 +747,19 @@ export function createSeed(now = new Date()): DemoDatabase {
     seededAt: now.toISOString(),
     users,
     journalEntries,
+    dailyCheckins,
     goals,
     goalCheckins,
     psychologists,
     availabilitySlots,
     appointments,
-    cohorts,
-    cohortMembers,
-    waitlistEntries,
-    cohortMessages,
+    sessionNotes,
+    groups,
+    groupMembers,
+    groupMessages,
     events,
+    resources,
+    testimonials,
+    siteContent: {},
   };
 }

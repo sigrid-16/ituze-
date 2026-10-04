@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Per-browser demo settings: language, theme and the active demo role.
+ * Per-browser demo settings: language, theme and the signed-in demo account.
  * Exposed through useSyncExternalStore so server and client render safely.
  */
 import { useSyncExternalStore } from "react";
@@ -12,13 +12,14 @@ export type ThemePref = "light" | "dark" | "system";
 export interface Settings {
   locale: Locale;
   theme: ThemePref;
+  /** Role of the signed-in demo account (see lib/auth.ts) */
   role: Role;
-  /** Set once the viewer has picked a role or finished onboarding */
-  started: boolean;
+  /** True while signed in to a demo account */
+  signedIn: boolean;
 }
 
 const KEY = "ituze-settings";
-export const DEFAULT_SETTINGS: Settings = { locale: "en", theme: "system", role: "identified", started: false };
+export const DEFAULT_SETTINGS: Settings = { locale: "en", theme: "system", role: "identified", signedIn: false };
 
 let current: Settings | null = null;
 const listeners = new Set<() => void>();

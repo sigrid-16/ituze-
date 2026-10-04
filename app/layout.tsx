@@ -1,18 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/nunito";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/500-italic.css";
+import "@fontsource/cormorant-garamond/600.css";
 import "./globals.css";
 import { Providers, themeBootScript } from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: { default: "Ituze · From isolation to connection", template: "%s · Ituze" },
+  title: { default: "Ituze · You don't have to carry everything alone", template: "%s · Ituze" },
   description:
-    "Ituze is a community-centered mental wellness platform in Rwanda: a private journal, verified psychologists and a 12-week healing journey in small cohorts.",
+    "Ituze is a calm place for mental wellness in Rwanda: a private journal and helpful resources, small and safe community groups, and private sessions with verified psychologists.",
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F7F1E8" },
-    { media: "(prefers-color-scheme: dark)", color: "#16201C" },
+    { media: "(prefers-color-scheme: light)", color: "#FBF8F3" },
+    { media: "(prefers-color-scheme: dark)", color: "#171D1A" },
   ],
 };
 

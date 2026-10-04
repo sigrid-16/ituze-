@@ -5,8 +5,15 @@
  * mock data source can be swapped for a real backend without touching the UI.
  */
 
+/**
+ * Account roles. In the UI, "psychologist" is labelled Therapist and "admin"
+ * is labelled Organizer; "anonymous" and "identified" are both Users.
+ */
 export type Role = "anonymous" | "identified" | "psychologist" | "admin";
 export type Locale = "en" | "rw" | "fr";
+
+/** "What brings you to Ituze?" answers. They only change what is recommended first. */
+export type Intent = "understand" | "connect" | "professional" | "exploring";
 
 export interface User {
   id: string;
@@ -16,7 +23,7 @@ export interface User {
   isAnonymous: boolean;
   language: Locale;
   avatarColor?: string;
-  /** Goals picked during onboarding, optional */
+  intents: Intent[];
   joinedAt: string;
 }
 
@@ -37,6 +44,8 @@ export interface JournalEntry {
   durationSec?: number;
   mood?: Mood;
   promptId?: string;
+  /** Psychologist ids this entry was explicitly shared with. Private when empty. */
+  sharedWith?: string[];
   createdAt: string;
 }
 
@@ -44,6 +53,18 @@ export interface ReflectionPrompt {
   id: string;
   /** i18n key, so prompts are translated */
   key: string;
+}
+
+/* --------------------------- Daily check-in ----------------------------- */
+
+export type CheckinMood = "good" | "getting-by" | "heavy" | "too-much" | "unsure";
+
+export interface DailyCheckin {
+  id: string;
+  userId: string;
+  /** YYYY-MM-DD */
+  date: string;
+  mood: CheckinMood;
 }
 
 /* ------------------------------ Goals ----------------------------------- */
@@ -106,81 +127,108 @@ export interface AvailabilitySlot {
   booked: boolean;
 }
 
-export type AppointmentStatus = "upcoming" | "completed" | "cancelled";
+/** "requested" waits for the therapist to accept; "declined" was not accepted. */
+export type AppointmentStatus = "requested" | "upcoming" | "completed" | "cancelled" | "declined";
 
 export interface Appointment {
   id: string;
   memberId: string;
+  /** What the therapist sees: the nickname for anonymous clients, never more. */
+  memberName: string;
+  memberAnonymous: boolean;
   psychologistId: string;
+  slotId?: string;
   mode: SessionMode;
   time: string;
   durationMin: number;
   status: AppointmentStatus;
+  /** Optional message from the client with the request */
+  message?: string;
 }
 
-/* ------------------------------ Cohorts --------------------------------- */
+/** Private to the therapist who wrote it. */
+export interface SessionNote {
+  id: string;
+  appointmentId: string;
+  psychologistId: string;
+  body: string;
+  updatedAt: string;
+}
 
-export type CohortStatus = "forming" | "active" | "graduated";
-export type MemberCohortStatus = "none" | "waiting" | "assigned" | "active" | "graduated";
+/* ----------------------------- Community -------------------------------- */
 
-export interface Cohort {
+export interface CommunityGroup {
   id: string;
   name: string;
-  facilitatorId: string; // psychologist id
+  description: string;
+  /** Psychologist id of the facilitator, if any */
+  facilitatorId?: string;
   location: string;
-  /** Time of day, e.g. "17:30–19:30". The weekday follows from startDate. */
-  timeSlot: string;
-  startDate: string;
-  status: CohortStatus;
-  capacity: number; // 7–10
-  /** 1–12 for active cohorts */
-  currentWeek: number;
+  /** e.g. "Thursdays · 17:30" */
+  rhythm: string;
+  capacity: number;
+  createdAt: string;
 }
 
-export interface CohortMember {
-  cohortId: string;
+export interface GroupMember {
+  groupId: string;
   userId: string;
   displayName: string;
   joinedAt: string;
 }
 
-export interface WaitlistEntry {
+export interface GroupMessage {
   id: string;
-  userId: string;
-  preferredLocation: string;
-  preferredSlot: string;
-  createdAt: string;
-}
-
-export interface CohortMessage {
-  id: string;
-  cohortId: string;
-  authorId: string;
+  groupId: string;
   authorName: string;
-  isFacilitator: boolean;
   body: string;
   pinned: boolean;
   isAnnouncement: boolean;
   createdAt: string;
 }
 
-export interface JourneyWeek {
-  week: number;
-  phase: 1 | 2 | 3 | 4;
-  /** i18n key for theme */
-  themeKey: string;
-  promptKey: string;
-}
-
-/* ------------------------------ Alumni ---------------------------------- */
-
 export interface CommunityEvent {
   id: string;
   title: string;
-  kind: "gathering" | "creative" | "project" | "volunteer" | "program";
+  kind: "gathering" | "creative" | "workshop" | "volunteer";
+  /** Group-only activity, or open to everyone when empty */
+  groupId?: string;
   date: string;
   location: string;
   description: string;
+}
+
+/* ------------------------------ Content --------------------------------- */
+
+export interface Resource {
+  id: string;
+  kind: "article" | "exercise";
+  title: string;
+  summary: string;
+  body: string;
+  minutes: number;
+  topic: string;
+  published: boolean;
+  createdAt: string;
+}
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  /** e.g. "24, Kigali" */
+  detail: string;
+  quote: string;
+  approved: boolean;
+  pinned: boolean;
+  /** Demo sample story, to be replaced with real, consented stories */
+  sample: boolean;
+  createdAt: string;
+}
+
+/** Homepage copy the organizer can override. Empty fields use the translated defaults. */
+export interface SiteContent {
+  heroTitle?: string;
+  heroBody?: string;
 }
 
 /* -------------------------------- DB ------------------------------------ */
@@ -191,14 +239,18 @@ export interface DemoDatabase {
   seededAt: string;
   users: User[];
   journalEntries: JournalEntry[];
+  dailyCheckins: DailyCheckin[];
   goals: Goal[];
   goalCheckins: GoalCheckin[];
   psychologists: Psychologist[];
   availabilitySlots: AvailabilitySlot[];
   appointments: Appointment[];
-  cohorts: Cohort[];
-  cohortMembers: CohortMember[];
-  waitlistEntries: WaitlistEntry[];
-  cohortMessages: CohortMessage[];
+  sessionNotes: SessionNote[];
+  groups: CommunityGroup[];
+  groupMembers: GroupMember[];
+  groupMessages: GroupMessage[];
   events: CommunityEvent[];
+  resources: Resource[];
+  testimonials: Testimonial[];
+  siteContent: SiteContent;
 }

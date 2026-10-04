@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ImageIcon, Mic, NotebookPen, Plus, Search } from "lucide-react";
-import { ImigongoPattern } from "@/components/brand/imigongo";
 import { PageHeader } from "@/components/common/page-header";
 import { PrivacyNote } from "@/components/common/privacy-note";
 import { JournalEntryCard } from "@/components/journal/entry-card";
@@ -56,15 +55,14 @@ export default function JournalPage() {
       />
 
       {/* Quick start */}
-      <div className="relative mb-6 overflow-hidden rounded-3xl border border-border bg-surface p-5">
-        <ImigongoPattern className="absolute inset-x-0 bottom-0 h-3 w-full text-primary opacity-20" />
+      <div className="relative mb-6 overflow-hidden rounded-[2rem] bg-blush/70 p-5">
         <PrivacyNote />
         <div className="mt-4 grid grid-cols-3 gap-3">
           {FILTERS.slice(1).map(({ value, key, icon: Icon }) => (
             <Link
               key={value}
               href={`/app/journal/new?type=${value}`}
-              className="flex flex-col items-center gap-2 rounded-2xl bg-background px-2 py-4 text-sm font-bold transition-colors hover:bg-primary-soft hover:text-primary"
+              className="lift flex flex-col items-center gap-2 rounded-2xl bg-surface px-2 py-4 text-sm font-bold transition-colors hover:text-primary"
             >
               {Icon && <Icon className="size-6 text-primary" />}
               {t(key)}
